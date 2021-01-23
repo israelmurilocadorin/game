@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Engine</title>
+        <style>
+            canvas {
+                position: absolute;
+                top: 0px;
+                bottom: 0px;
+                left: 0px;
+                right: 0px;
+                margin: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            var canvas, ctx, HEIGHT, WIDTH, frames = 0, maxJump = 3,
+            
+            floor = {
+                y: 550,
+                height: 50,
+                color: "#ffdf70",
+
+                draw: function() {
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(0, this.y, WIDTH, this.height);
+                }
+            },
+
+            block = {
+                x: 50,
+                y: 0,
+                height: 50,
+                width: 50,
+                color: "#ff4e4e",
+                gravity: 1.5,
+                speed: 0,
+                jumpForce: 15,
+                jumpAmount: 0,
+
+                update: function() {
+                    this.speed += this.gravity;
+                    this.y += this.speed;
+
+                    if(this.y > floor.y - this.height) {
+                        this.y = floor.y - this.height;
+                        this.jumpAmount = 0;
+                    }
+                },
+
+                jump: function() {
+                    if(this.jumpAmount < maxJump) {
+                        this.speed = -this.jumpForce;
+                        this.jumpAmount++;
+                    }
+                },
+
+                draw: function() {
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }
+            };
+
+            function click(event) {
+                block.jump();
+            }
+
+            function main() {
+                HEIGHT = window.innerHeight;
+                WIDTH = window.innerWidth;
+                
+                if(WIDTH >= 500){
+                    WIDTH = 600;
+                    HEIGHT = 600; 
+                }
+
+                canvas = document.createElement("canvas");
+                canvas.width = WIDTH;
+                canvas.height = HEIGHT;
+                canvas.style.border = "1px solid #000"
+                
+                ctx = canvas.getContext("2d");
+                document.body.appendChild(canvas);
+                document.addEventListener("mousedown", click);
+                
+                roll();
+            }
+
+            function roll() {
+                update();
+                draw();
+
+                window.requestAnimationFrame(roll);
+            }
+
+            function update() {
+                frames++;
+                block.update();
+            }
+
+            function draw() {
+                ctx.fillStyle = "#50beff";
+                ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+                floor.draw();
+                block.draw();
+            }
+
+            //inicializar
+            main();    
+        </script>
+    </body>
+</html>
